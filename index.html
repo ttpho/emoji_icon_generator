@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <base href="/emoji_icon_generator/">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emoji Icon Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Custom styles for better aesthetics and responsiveness */
+        body {
+            font-family: "Inter", sans-serif;
+            background-color: #f0f4f8;
+            /* Light blue-gray background */
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            /* Align to top for better content flow */
+            min-height: 100vh;
+            padding: 2rem 1rem;
+            box-sizing: border-box;
+        }
+
+        .container {
+            background-color: #ffffff;
+            border-radius: 1.5rem;
+            /* More rounded corners */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            /* Softer shadow */
+            padding: 2.5rem;
+            max-width: 900px;
+            /* Increased max-width */
+            width: 100%;
+            text-align: center;
+        }
+
+        h1 {
+            color: #2c3e50;
+            /* Darker text for heading */
+            margin-bottom: 1.5rem;
+        }
+
+        .input-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        #emojiInput {
+            padding: 0.75rem 1rem;
+            border: 2px solid #cbd5e0;
+            /* Lighter border */
+            border-radius: 0.75rem;
+            /* Rounded input */
+            font-size: 1.5rem;
+            /* Larger font for emoji input */
+            text-align: center;
+            width: 100%;
+            max-width: 300px;
+            outline: none;
+            transition: border-color 0.2s ease-in-out;
+        }
+
+        #emojiInput:focus {
+            border-color: #3b82f6;
+            /* Blue focus border */
+        }
+
+        .emoji-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .emoji-button {
+            padding: 0.5rem 0.75rem;
+            background-color: #e2e8f0;
+            /* Light gray button */
+            border-radius: 0.5rem;
+            font-size: 1.25rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+            border: none;
+            outline: none;
+        }
+
+        .emoji-button:hover {
+            background-color: #cbd5e0;
+            /* Darker gray on hover */
+            transform: translateY(-2px);
+            /* Slight lift effect */
+        }
+
+        .preview-section {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e2e8f0;
+            /* Separator line */
+        }
+
+        /* #previewCanvas {
+            border: 2px solid #e2e8f0;
+            border-radius: 1rem;
+            margin-top: 1rem;
+            background-color: #ffffff;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+        } 
+
+        .generate-button {
+            background-color: #3b82f6;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 0.75rem;
+            font-size: 1.125rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+            border: none;
+            outline: none;
+            margin-top: 2rem;
+            box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3);
+        }
+
+        .generate-button:hover {
+            background-color: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        .generate-button:active {
+            transform: translateY(0);
+            box-shadow: none;
+        } */
+
+        .download-section {
+            margin-top: 2.5rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .download-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            /* Responsive grid */
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .download-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f8fafc;
+            /* Very light background for items */
+            border-radius: 0.75rem;
+            padding: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .download-item:hover {
+            transform: translateY(-3px);
+        }
+
+        .download-item img {
+            border-radius: 0.5rem;
+            margin-bottom: 0.75rem;
+            border: 1px solid #e2e8f0;
+            width: 80px;
+            /* Fixed size for preview image */
+            height: 80px;
+            object-fit: contain;
+            /* Ensure emoji fits */
+        }
+
+        .download-item a {
+            background-color: #60a5fa;
+            /* Lighter blue for download link */
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            text-decoration: none;
+            transition: background-color 0.2s ease-in-out;
+        }
+
+        .download-item a:hover {
+            background-color: #3b82f6;
+            /* Darker blue on hover */
+        }
+
+        .download-item span {
+            font-size: 0.9rem;
+            color: #4a5568;
+            /* Darker gray for text */
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            height: 64px;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+            }
+
+            h1 {
+                font-size: 1.75rem;
+            }
+
+            .generate-button {
+                padding: 0.75rem 1.5rem;
+                font-size: 1rem;
+            }
+
+            .download-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                gap: 1rem;
+            }
+
+            .download-item img {
+                width: 60px;
+                height: 60px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="text-3xl font-extrabold mb-6">Emoji Icon Generator</h1>
+
+        <div class="input-section">
+            <label for="emojiInput" class="text-lg font-semibold text-gray-700">Enter or pick an emoji:</label>
+            <input type="text" id="emojiInput" value="✨" maxlength="2" placeholder="✨" />
+            <div class="emoji-buttons">
+                <button class="emoji-button" data-emoji="🤖">🤖</button>
+                <button class="emoji-button" data-emoji="✌️">✌️</button>
+                <button class="emoji-button" data-emoji="👨‍💻">👨‍💻</button>
+                <button class="emoji-button" data-emoji="👑">👑</button>
+                <button class="emoji-button" data-emoji="🦦">🦦</button>
+                <button class="emoji-button" data-emoji="🥥">🥥</button>
+                <button class="emoji-button" data-emoji="🥖">🥖</button>
+                <button class="emoji-button" data-emoji="🎗">🎗</button>
+                <button class="emoji-button" data-emoji="🛸">🛸</button>
+                <button class="emoji-button" data-emoji="🏖">🏖</button>
+                <button class="emoji-button" data-emoji="💊">💊</button>
+                <button class="emoji-button" data-emoji="📒">📒</button>
+                <button class="emoji-button" data-emoji="❤️">❤️</button>
+                <button class="emoji-button" data-emoji="💬">💬</button>
+                <button class="emoji-button" data-emoji="🇻🇳">🇻🇳</button>
+            </div>
+        </div>
+
+        <!-- <div class="preview-section">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Live Preview:</h2>
+            <canvas id="previewCanvas" width="128" height="128" class="rounded-xl shadow-md"></canvas>
+        </div> -->
+
+        <!-- <button id="generateButton" class="generate-button">Generate & Download Icons</button> -->
+
+        <div class="download-section">
+            <h2 class="text-xl font-semibold text-gray-700 mb-4">Generated Icons:</h2>
+            <div id="downloadLinksContainer" class="download-grid">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const emojiInput = document.getElementById('emojiInput');
+        // const previewCanvas = document.getElementById('previewCanvas');
+        const generateButton = document.getElementById('generateButton');
+        const downloadLinksContainer = document.getElementById('downloadLinksContainer');
+        const emojiButtons = document.querySelectorAll('.emoji-button');
+
+        // Get 2D rendering context for the preview canvas
+        // const ctx = previewCanvas.getContext('2d');
+
+        // Define the icon specifications: size in pixels and desired filename
+        const iconSpecs = [
+            { size: 32, name: 'favicon.png' },
+            { size: 192, name: 'Icon-192.png' },
+            { size: 512, name: 'Icon-512.png' },
+            { size: 192, name: 'Icon-maskable-192.png' },
+            { size: 512, name: 'Icon-maskable-512.png' }
+        ];
+
+        /**
+         * Draws the given emoji onto the specified canvas.
+         * @param {HTMLCanvasElement} canvas - The canvas element to draw on.
+         * @param {string} emoji - The emoji character to draw.
+         * @param {number} size - The target size of the canvas (width and height).
+         */
+        function drawEmoji(canvas, emoji, size) {
+            // Set canvas dimensions
+            canvas.width = size;
+            canvas.height = size;
+
+            // Get 2D rendering context
+            const context = canvas.getContext('2d');
+
+            // Clear the canvas to ensure transparency or a clean background
+            context.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Set font properties for the emoji.
+            // A common font stack for emojis ensures broad compatibility.
+            // The font size is a percentage of the canvas size to ensure it fits well.
+            context.font = `bold ${size * 0.7}px "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif`;
+            context.textAlign = 'center';
+            context.textBaseline = 'middle';
+
+            // Draw the emoji in the center of the canvas
+            context.fillText(emoji, canvas.width / 2, canvas.height / 2);
+        }
+
+        /**
+         * Updates the preview canvas with the current emoji from the input field.
+         */
+        function updatePreview() {
+            const emoji = emojiInput.value.trim();
+            if (emoji) {
+                // Draw the emoji on the preview canvas at its current size (128x128)
+                // drawEmoji(previewCanvas, emoji, previewCanvas.width);
+                generateAndDownloadIcons(); // Generate icons immediately after preview update
+            } else {
+                // Clear preview if no emoji is entered
+                // ctx.clearRect(0, 0, previewCanvas.width, previewCanvas.height);
+            }
+        }
+
+        /**
+         * Generates image files for each specified size and creates download links.
+         */
+        function generateAndDownloadIcons() {
+            const emoji = emojiInput.value.trim();
+            if (!emoji) {
+                // Use a simple message box instead of alert()
+                displayMessageBox("Please enter an emoji first!");
+                return;
+            }
+
+            // Clear previous download links
+            downloadLinksContainer.innerHTML = '';
+
+            // Loop through each icon specification
+            iconSpecs.forEach(spec => {
+                // Create an off-screen canvas for generating each icon.
+                // This prevents flickering and doesn't clutter the visible DOM.
+                const offscreenCanvas = document.createElement('canvas');
+
+                // Draw the emoji onto the off-screen canvas at the specified size
+                drawEmoji(offscreenCanvas, emoji, spec.size);
+
+                // Convert the canvas content to a PNG data URL
+                const dataUrl = offscreenCanvas.toDataURL('image/png');
+
+                // Create a container for each download item
+                const downloadItem = document.createElement('div');
+                downloadItem.className = 'download-item';
+
+                // Create an image element to show a preview of the generated icon
+                const imgPreview = document.createElement('img');
+                imgPreview.src = dataUrl;
+                imgPreview.alt = `${spec.name} preview`;
+                imgPreview.width = 80; // Fixed preview size
+                imgPreview.height = 80;
+
+                // Create a span to display the filename
+                const fileNameSpan = document.createElement('span');
+                fileNameSpan.textContent = spec.name;
+
+                // Create a download link
+                const downloadLink = document.createElement('a');
+                downloadLink.href = dataUrl;
+                downloadLink.download = spec.name; // Set the filename for download
+                downloadLink.textContent = 'Download';
+
+                // Append elements to the download item container
+                downloadItem.appendChild(imgPreview);
+                downloadItem.appendChild(fileNameSpan);
+                downloadItem.appendChild(downloadLink);
+
+                // Append the download item to the main download links container
+                downloadLinksContainer.appendChild(downloadItem);
+            });
+        }
+
+        /**
+         * Displays a simple message box.
+         * @param {string} message - The message to display.
+         */
+        function displayMessageBox(message) {
+            // Create a simple modal/message box dynamically
+            const messageBox = document.createElement('div');
+            messageBox.className = 'fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50';
+            messageBox.innerHTML = `
+                <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full text-center">
+                    <p class="text-lg font-semibold mb-4">${message}</p>
+                    <button id="closeMessageBox" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition">OK</button>
+                </div>
+            `;
+            document.body.appendChild(messageBox);
+
+            document.getElementById('closeMessageBox').addEventListener('click', () => {
+                document.body.removeChild(messageBox);
+            });
+        }
+
+        // --- Event Listeners ---
+
+        // Update preview when emoji input changes
+        emojiInput.addEventListener('input', updatePreview);
+
+        // Handle clicks on emoji buttons
+        emojiButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                emojiInput.value = button.dataset.emoji;
+                updatePreview(); // Update preview immediately after setting emoji
+            });
+        });
+
+        // Generate icons when the button is clicked
+        // generateButton.addEventListener('click', generateAndDownloadIcons);
+
+        // Initial preview update when the page loads
+        window.onload = updatePreview;
+
+    </script>
+</body>
+
+</html>
